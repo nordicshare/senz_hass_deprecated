@@ -1,0 +1,11 @@
+{
+  "name": "SENZ WiFi",
+  "domains": [
+    "climate",
+    "sensor"
+  ],
+  "homeassistant": "2021.11.0",
+  "iot_class": [
+    "Cloud Poll"
+  ]
+}

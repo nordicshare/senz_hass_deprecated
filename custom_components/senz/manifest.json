@@ -1,0 +1,18 @@
+{
+  "domain": "senz",
+  "name": "SENZ WiFi",
+  "config_flow": true,
+  "documentation": "https://www.home-assistant.io/integrations/senz",
+  "requirements": [],
+  "ssdp": [],
+  "zeroconf": [],
+  "homekit": {},
+  "version": "0.0.1",
+  "dependencies": [
+    "http"
+  ],
+  "codeowners": [
+    "@astrandb"
+  ],
+  "iot_class": "cloud_polling"
+}
