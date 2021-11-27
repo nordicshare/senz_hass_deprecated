@@ -14,7 +14,9 @@ from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.typing import ConfigType
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from . import api, config_flow
+from . import config_flow
+
+from .api import AsyncConfigEntryAuth
 from .const import DOMAIN, OAUTH2_AUTHORIZE, OAUTH2_TOKEN
 
 _LOGGER = logging.getLogger(__name__)
@@ -58,7 +60,6 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up SENZ WiFi from a config entry."""
-    _LOGGER.debug("Async_setup_entry: %s", entry)
     implementation = (
         await config_entry_oauth2_flow.async_get_config_entry_implementation(
             hass, entry
@@ -66,15 +67,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     )
 
     session = config_entry_oauth2_flow.OAuth2Session(hass, entry, implementation)
-
-    hass.data[DOMAIN][entry.entry_id] = api.AsyncConfigEntryAuth(
+    hass.data[DOMAIN][entry.entry_id] = {}
+    hass.data[DOMAIN][entry.entry_id]["api"] = AsyncConfigEntryAuth(
         aiohttp_client.async_get_clientsession(hass), session
     )
 
-    coordinator = await get_coordinator(hass)
+    coordinator = await get_coordinator(hass, entry)
     if not coordinator.last_update_success:
         await coordinator.async_config_entry_first_refresh()
-    _LOGGER.debug("First data: %s", coordinator.data)
+    # _LOGGER.debug("First data: %s", coordinator.data)
 
     hass.config_entries.async_setup_platforms(entry, PLATFORMS)
     return True
@@ -90,24 +91,24 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 async def get_coordinator(
     hass: HomeAssistant,
+    entry: ConfigEntry,
 ) -> DataUpdateCoordinator:
     """Get the data update coordinator."""
-    if "coordinator" in hass.data[DOMAIN]:
-        return hass.data[DOMAIN]["coordinator"]
+    if "coordinator" in hass.data[DOMAIN][entry.entry_id]:
+        return hass.data[DOMAIN][entry.entry_id]["coordinator"]
 
     async def async_fetch():
-        # TODO Fix senz_api
-        senz_api = hass.data[DOMAIN]["fe010301d81328c444a6418438b5f770"]
+        senz_api = hass.data[DOMAIN][entry.entry_id]["api"]
         async with async_timeout.timeout(10):
             res = await senz_api.request("GET", "/Thermostat")
             return await res.json()
 
-    hass.data[DOMAIN]["coordinator"] = DataUpdateCoordinator(
+    hass.data[DOMAIN][entry.entry_id]["coordinator"] = DataUpdateCoordinator(
         hass,
         logging.getLogger(__name__),
         name=DOMAIN,
         update_method=async_fetch,
         update_interval=timedelta(seconds=30),
     )
-    await hass.data[DOMAIN]["coordinator"].async_refresh()
-    return hass.data[DOMAIN]["coordinator"]
+    await hass.data[DOMAIN][entry.entry_id]["coordinator"].async_refresh()
+    return hass.data[DOMAIN][entry.entry_id]["coordinator"]
