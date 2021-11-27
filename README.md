@@ -24,9 +24,6 @@ Make sure you have the credentials available for your account with nVent cloud.
 
 ### Setup
 
-Goto Integrations->Add and select Senz
-Follow instrucions to authenticate with nVent cloud server. Allow access for Home Assistant client.
-
 Request a client_id and client_secret from the manufacturer and
 enter following lines to `configuration.yaml`
 
@@ -35,3 +32,6 @@ senz:
   client_id: your_client_id
   client_secret: your_client_secret
 ```
+
+Goto Integrations->Add and select Senz
+Follow instructions to authenticate with nVent cloud server. Allow access for Home Assistant client.
