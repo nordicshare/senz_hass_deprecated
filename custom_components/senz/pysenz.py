@@ -1,8 +1,18 @@
 """Library for SENZ WiFi API."""
 
+# TODO
+# Should be moved to pypi.org when reasonable stable
+
+import json
+import logging
 from abc import ABC, abstractmethod
 
+import async_timeout
 from aiohttp import ClientResponse, ClientSession
+
+CONTENT_TYPE = "application/json-patch+json"
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class AbstractAuth(ABC):
@@ -25,6 +35,7 @@ class AbstractAuth(ABC):
             headers = {}
         else:
             headers = dict(headers)
+            kwargs.pop("headers")
 
         access_token = await self.async_get_access_token()
         headers["authorization"] = f"Bearer {access_token}"
@@ -35,3 +46,71 @@ class AbstractAuth(ABC):
             **kwargs,
             headers=headers,
         )
+
+    async def set_target_temperature(self, serial: str, temperature: int):
+        """Set target temperature"""
+
+        async with async_timeout.timeout(10):
+            data = {"serialNumber": serial, "temperature": temperature}
+            res = await self.request(
+                "PUT",
+                "/Mode/manual",
+                data=json.dumps(data),
+                headers={
+                    "Content-Type": CONTENT_TYPE,
+                    "Accept": "application/json",
+                },
+            )
+        return res
+
+    async def set_mode_auto(self, serial: str):
+        """Set target temperature"""
+
+        async with async_timeout.timeout(10):
+            data = {"serialNumber": serial}
+            res = await self.request(
+                "PUT",
+                "/Mode/auto",
+                data=json.dumps(data),
+                headers={
+                    "Content-Type": CONTENT_TYPE,
+                    "Accept": "application/json",
+                },
+            )
+        return res
+
+    async def set_mode_hold(self, serial: str, temperature: int, hold_until: str):
+        """Set target temperature"""
+
+        async with async_timeout.timeout(10):
+            data = {
+                "serialNumber": serial,
+                "temperature": temperature,
+                "holdUntil": hold_until,
+            }
+            res = await self.request(
+                "PUT",
+                "/Mode/hold",
+                data=json.dumps(data),
+                headers={
+                    "Content-Type": CONTENT_TYPE,
+                    "Accept": "application/json",
+                },
+            )
+        return res
+
+    async def set_mode_off(self, serial: str):
+        """Set target temperature"""
+
+        async with async_timeout.timeout(10):
+            data = {"serialNumber": serial}
+            res = await self.request(
+                "PUT",
+                "/Mode/off",
+                data=json.dumps(data),
+                headers={
+                    "Content-Type": CONTENT_TYPE,
+                    "Accept": "application/json",
+                },
+            )
+        return res

@@ -1,14 +1,18 @@
 """Platform for climate integration."""
 from __future__ import annotations
 
+from typing import Any
+
 from homeassistant.components.climate import ClimateEntity
 from homeassistant.components.climate.const import (
     CURRENT_HVAC_HEAT,
     CURRENT_HVAC_IDLE,
+    HVAC_MODE_AUTO,
     HVAC_MODE_HEAT,
+    HVAC_MODE_OFF,
     SUPPORT_TARGET_TEMPERATURE,
 )
-from homeassistant.const import TEMP_CELSIUS
+from homeassistant.const import ATTR_TEMPERATURE, TEMP_CELSIUS
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -28,17 +32,19 @@ async def async_setup_entry(
     coordinator = await get_coordinator(hass, config_entry)
 
     async_add_entities(
-        SenzClimate(coordinator, idx) for idx, ent in enumerate(coordinator.data)
+        SenzClimate(coordinator, idx, hass, config_entry)
+        for idx, ent in enumerate(coordinator.data)
     )
 
 
 class SenzClimate(CoordinatorEntity, ClimateEntity):
     """Representation of a Thermostat."""
 
-    def __init__(self, coordinator, idx):
+    def __init__(self, coordinator, idx, hass, entry):
         """Initialize the climate entity."""
         super().__init__(coordinator)
         self._idx = idx
+        self._api = hass.data[DOMAIN][entry.entry_id]["api"]
         self._attr_name = self.coordinator.data[self._idx]["name"]
         self._attr_native_unit_of_measurement = TEMP_CELSIUS
         self._attr_unique_id = (
@@ -52,7 +58,7 @@ class SenzClimate(CoordinatorEntity, ClimateEntity):
         self._attr_temperature_unit = TEMP_CELSIUS
         self._attr_precision = 0.1
         self._attr_supported_features = SUPPORT_TARGET_TEMPERATURE
-        self._attr_hvac_modes = [HVAC_MODE_HEAT]
+        self._attr_hvac_modes = [HVAC_MODE_HEAT, HVAC_MODE_OFF, HVAC_MODE_AUTO]
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, self.coordinator.data[self._idx]["serialNumber"])},
             name=self.coordinator.data[self._idx]["name"],
@@ -82,4 +88,34 @@ class SenzClimate(CoordinatorEntity, ClimateEntity):
     @property
     def hvac_mode(self):
         """Return the current mode."""
-        return HVAC_MODE_HEAT
+        mode = self.coordinator.data[self._idx]["mode"]
+        if mode == 5:
+            return HVAC_MODE_OFF
+        if mode == 3:
+            return HVAC_MODE_HEAT
+        if mode == 1:
+            return HVAC_MODE_AUTO
+        return
+
+    async def async_set_hvac_mode(self, hvac_mode: str) -> None:
+        """Set new hvac mode."""
+        if hvac_mode == HVAC_MODE_HEAT:
+            await self._api.set_target_temperature(
+                self.coordinator.data[self._idx]["serialNumber"], int(15 * 100)
+            )
+        elif hvac_mode == HVAC_MODE_AUTO:
+            await self._api.set_mode_auto(
+                self.coordinator.data[self._idx]["serialNumber"]
+            )
+        elif hvac_mode == HVAC_MODE_OFF:
+            await self._api.set_mode_off(
+                self.coordinator.data[self._idx]["serialNumber"]
+            )
+
+    async def async_set_temperature(self, **kwargs: Any) -> None:
+        """Set new target temperature."""
+        if (temperature := kwargs.get(ATTR_TEMPERATURE)) is None:
+            return
+        await self._api.set_target_temperature(
+            self.coordinator.data[self._idx]["serialNumber"], int(temperature * 100)
+        )

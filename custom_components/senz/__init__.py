@@ -15,7 +15,6 @@ from homeassistant.helpers.typing import ConfigType
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from . import config_flow
-
 from .api import AsyncConfigEntryAuth
 from .const import DOMAIN, OAUTH2_AUTHORIZE, OAUTH2_TOKEN
 
@@ -101,6 +100,7 @@ async def get_coordinator(
         senz_api = hass.data[DOMAIN][entry.entry_id]["api"]
         async with async_timeout.timeout(10):
             res = await senz_api.request("GET", "/Thermostat")
+            # _LOGGER.debug("Data: %s", await res.json())
             return await res.json()
 
     hass.data[DOMAIN][entry.entry_id]["coordinator"] = DataUpdateCoordinator(
