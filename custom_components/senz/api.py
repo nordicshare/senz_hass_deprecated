@@ -1,16 +1,18 @@
 """API for SENZ WiFi bound to Home Assistant OAuth."""
 import logging
 
-# from asyncio import run_coroutine_threadsafe
-
 from aiohttp import ClientSession
-from .const import SENZ_API
 
 # from homeassistant.core import HomeAssistant
 from homeassistant.helpers import config_entry_oauth2_flow
 
+from .const import SENZ_API
+
 # from . pysenz import my_pypi_package
 from .pysenz import AbstractAuth
+
+# from asyncio import run_coroutine_threadsafe
+
 
 _LOGGER = logging.getLogger(__name__)
 

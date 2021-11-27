@@ -1,12 +1,11 @@
 """Platform for sensor integration."""
 from __future__ import annotations
 
-from homeassistant.components.sensor import (
-    DEVICE_CLASS_TEMPERATURE,
-    STATE_CLASS_MEASUREMENT,
-    SensorEntity,
+from homeassistant.components.binary_sensor import (
+    DEVICE_CLASS_CONNECTIVITY,
+    BinarySensorEntity,
 )
-from homeassistant.const import TEMP_CELSIUS
+from homeassistant.const import ENTITY_CATEGORY_DIAGNOSTIC
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -26,24 +25,22 @@ async def async_setup_entry(
     coordinator = await get_coordinator(hass)
 
     async_add_entities(
-        SenzSensor(coordinator, idx) for idx, ent in enumerate(coordinator.data)
+        SenzBinarySensor(coordinator, idx) for idx, ent in enumerate(coordinator.data)
     )
 
 
-class SenzSensor(CoordinatorEntity, SensorEntity):
+class SenzBinarySensor(CoordinatorEntity, BinarySensorEntity):
     """Representation of a Sensor."""
 
     def __init__(self, coordinator, idx):
         """Initialize the sensor."""
         super().__init__(coordinator)
         self._idx = idx
-        self._state = None
         self._attr_name = self.coordinator.data[self._idx]["name"]
-        self._attr_device_class = DEVICE_CLASS_TEMPERATURE
-        self._attr_native_unit_of_measurement = TEMP_CELSIUS
-        self._attr_state_class = STATE_CLASS_MEASUREMENT
+        self._attr_device_class = DEVICE_CLASS_CONNECTIVITY
+        self._attr_entity_category = ENTITY_CATEGORY_DIAGNOSTIC
         self._attr_unique_id = (
-            f"temp-{self.coordinator.data[self._idx]['serialNumber']}"
+            f"online-{self.coordinator.data[self._idx]['serialNumber']}"
         )
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, self.coordinator.data[self._idx]["serialNumber"])},
@@ -53,6 +50,6 @@ class SenzSensor(CoordinatorEntity, SensorEntity):
         )
 
     @property
-    def native_value(self):
+    def is_on(self):
         """Return the state of the sensor."""
-        return self.coordinator.data[self._idx]["currentTemperature"] / 100
+        return self.coordinator.data[self._idx]["online"]

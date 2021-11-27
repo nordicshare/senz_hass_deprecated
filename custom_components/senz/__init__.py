@@ -1,24 +1,21 @@
 """The SENZ WiFi integration."""
 from __future__ import annotations
 
-from datetime import timedelta
-import voluptuous as vol
 import logging
-import async_timeout
+from datetime import timedelta
 
+import async_timeout
+import voluptuous as vol
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_CLIENT_ID, CONF_CLIENT_SECRET
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers import (
-    aiohttp_client,
-    config_entry_oauth2_flow,
-    config_validation as cv,
-)
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
+from homeassistant.helpers import aiohttp_client, config_entry_oauth2_flow
+from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.typing import ConfigType
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from . import api, config_flow
-from .const import DOMAIN, SENZ_API, OAUTH2_AUTHORIZE, OAUTH2_TOKEN
+from .const import DOMAIN, OAUTH2_AUTHORIZE, OAUTH2_TOKEN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -36,14 +33,12 @@ CONFIG_SCHEMA = vol.Schema(
 
 # TODO List the platforms that you want to support.
 # For your initial PR, limit it to 1 platform.
-PLATFORMS = ["climate", "sensor"]
+PLATFORMS = ["binary_sensor", "climate", "sensor"]
 
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Set up the SENZ WiFi component."""
     hass.data[DOMAIN] = {}
-
-    # _LOGGER.debug("Config: %s", config[DOMAIN])
 
     if DOMAIN not in config:
         return True
@@ -78,18 +73,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         aiohttp_client.async_get_clientsession(hass), session
     )
 
-    senz_api = hass.data[DOMAIN][entry.entry_id]
-
-    res = await senz_api.request("GET", "/Thermostat")
-    _LOGGER.debug("Get first data: %s", await res.json())
-
     coordinator = await get_coordinator(hass)
     if not coordinator.last_update_success:
         await coordinator.async_config_entry_first_refresh()
+    _LOGGER.debug("First data: %s", coordinator.data)
 
-    _LOGGER.debug("Coordinator Data: %s", coordinator.data)
     hass.config_entries.async_setup_platforms(entry, PLATFORMS)
-
     return True
 
 
@@ -98,7 +87,6 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unload_ok:
         hass.data[DOMAIN].pop(entry.entry_id)
-
     return unload_ok
 
 
