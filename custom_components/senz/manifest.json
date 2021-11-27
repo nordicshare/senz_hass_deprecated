@@ -3,7 +3,7 @@
   "name": "SENZ WiFi",
   "config_flow": true,
   "documentation": "https://github.com/astrandb/senz_hass",
-  "issue-tracker": "https://github.com/astrandb/senz_hass/issues",
+  "issue_tracker": "https://github.com/astrandb/senz_hass/issues",
   "requirements": [],
   "ssdp": [],
   "zeroconf": [],
