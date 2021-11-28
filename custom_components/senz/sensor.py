@@ -55,4 +55,4 @@ class SenzSensor(CoordinatorEntity, SensorEntity):
     @property
     def native_value(self):
         """Return the state of the sensor."""
-        return self.coordinator.data[self._idx]["currentTemperature"] / 100
+        return round(self.coordinator.data[self._idx]["currentTemperature"] / 100, 1)
