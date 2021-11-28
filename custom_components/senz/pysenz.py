@@ -1,7 +1,7 @@
 """Library for SENZ WiFi API."""
 
 # TODO
-# Should be moved to pypi.org when reasonable stable
+# Should be moved to pypi.org when reasonably stable
 
 import json
 import logging
@@ -64,7 +64,7 @@ class AbstractAuth(ABC):
         return res
 
     async def set_mode_auto(self, serial: str):
-        """Set target temperature"""
+        """Set auto mode"""
 
         async with async_timeout.timeout(10):
             data = {"serialNumber": serial}
@@ -79,8 +79,24 @@ class AbstractAuth(ABC):
             )
         return res
 
+    async def set_mode_manual(self, serial: str):
+        """Set heat/manual mode"""
+
+        async with async_timeout.timeout(10):
+            data = {"serialNumber": serial}
+            res = await self.request(
+                "PUT",
+                "/Mode/manual",
+                data=json.dumps(data),
+                headers={
+                    "Content-Type": CONTENT_TYPE,
+                    "Accept": "application/json",
+                },
+            )
+        return res
+
     async def set_mode_hold(self, serial: str, temperature: int, hold_until: str):
-        """Set target temperature"""
+        """Set hold mode"""
 
         async with async_timeout.timeout(10):
             data = {
@@ -100,7 +116,7 @@ class AbstractAuth(ABC):
         return res
 
     async def set_mode_off(self, serial: str):
-        """Set target temperature"""
+        """Set mode to off/standby"""
 
         async with async_timeout.timeout(10):
             data = {"serialNumber": serial}
