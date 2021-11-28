@@ -33,5 +33,6 @@ senz:
   client_secret: your_client_secret
 ```
 
-Goto Integrations->Add and select Senz
-Follow instructions to authenticate with nVent cloud server. Allow access for Home Assistant client.
+Goto Integrations->Add and select Senz WiFi
+
+Follow instructions to authenticate with nVent cloud server. Allow full access for Home Assistant client.
