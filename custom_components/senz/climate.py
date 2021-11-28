@@ -53,7 +53,7 @@ class SenzClimate(CoordinatorEntity, ClimateEntity):
         self._attr_max_temp = 35
         self._attr_min_temp = 5
         self._attr_target_temperature_high = 35
-        self._attr_target_temperature_min = 7
+        self._attr_target_temperature_min = 5
         self._attr_target_temperature_step = 0.5
         self._attr_temperature_unit = TEMP_CELSIUS
         self._attr_precision = 0.1
@@ -111,6 +111,7 @@ class SenzClimate(CoordinatorEntity, ClimateEntity):
             await self._api.set_mode_off(
                 self.coordinator.data[self._idx]["serialNumber"]
             )
+        await self.coordinator.async_request_refresh()
 
     async def async_set_temperature(self, **kwargs: Any) -> None:
         """Set new target temperature."""
@@ -119,3 +120,4 @@ class SenzClimate(CoordinatorEntity, ClimateEntity):
         await self._api.set_target_temperature(
             self.coordinator.data[self._idx]["serialNumber"], int(temperature * 100)
         )
+        await self.coordinator.async_request_refresh()
