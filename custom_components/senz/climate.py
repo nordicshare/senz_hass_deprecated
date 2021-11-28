@@ -69,7 +69,7 @@ class SenzClimate(CoordinatorEntity, ClimateEntity):
     @property
     def current_temperature(self):
         """Return the current temperature."""
-        return self.coordinator.data[self._idx]["currentTemperature"] / 100
+        return round(self.coordinator.data[self._idx]["currentTemperature"] / 100, 1)
 
     @property
     def target_temperature(self):
