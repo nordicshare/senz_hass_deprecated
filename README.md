@@ -36,3 +36,11 @@ senz:
 Goto Integrations->Add and select Senz WiFi
 
 Follow instructions to authenticate with nVent cloud server. Allow full access for Home Assistant client.
+
+## Disclaimer
+
+The package and its author are not affiliated with nVent or Raychem. Use at your own risk.
+
+## License
+
+The package is released under the MIT license.
