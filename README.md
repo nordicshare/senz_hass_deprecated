@@ -14,7 +14,7 @@ Make sure you have the credentials available for your account with nVent cloud.
 
 ### Preferred download method
 
-- Use HACS, add this repo as a custom repository and install Senz integration.
+- Use HACS, add this repo as a custom repository and install SENZ WiFi integration.
 - Restart Home Assistant
 
 ### Manual download method
