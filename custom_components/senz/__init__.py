@@ -11,6 +11,7 @@ from homeassistant.const import CONF_CLIENT_ID, CONF_CLIENT_SECRET
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import aiohttp_client, config_entry_oauth2_flow
 from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers.config_entry_oauth2_flow import LocalOAuth2Implementation
 from homeassistant.helpers.typing import ConfigType
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
@@ -35,6 +36,28 @@ CONFIG_SCHEMA = vol.Schema(
 PLATFORMS = ["binary_sensor", "climate", "sensor"]
 
 
+class SenzLocalOAuth2Implementation(LocalOAuth2Implementation):
+    def __init__(
+        self,
+        hass: HomeAssistant,
+        domain: str,
+        client_id: str,
+        client_secret: str,
+        authorize_url: str,
+        token_url: str,
+        name: str,
+    ) -> None:
+        super().__init__(
+            hass, domain, client_id, client_secret, authorize_url, token_url
+        )
+        self._name = name
+
+    @property
+    def name(self) -> str:
+        """Name of the implementation"""
+        return self._name
+
+
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Set up the SENZ WiFi component."""
     hass.data[DOMAIN] = {}
@@ -44,13 +67,15 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
 
     config_flow.OAuth2FlowHandler.async_register_implementation(
         hass,
-        config_entry_oauth2_flow.LocalOAuth2Implementation(
+        # config_entry_oauth2_flow.LocalOAuth2Implementation(
+        SenzLocalOAuth2Implementation(
             hass,
             DOMAIN,
             config[DOMAIN][CONF_CLIENT_ID],
             config[DOMAIN][CONF_CLIENT_SECRET],
             OAUTH2_AUTHORIZE,
             OAUTH2_TOKEN,
+            "nVent/SENZ",
         ),
     )
 
