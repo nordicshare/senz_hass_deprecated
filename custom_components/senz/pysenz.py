@@ -116,13 +116,14 @@ class AbstractAuth(ABC):
         return res
 
     async def set_mode_off(self, serial: str):
-        """Set mode to off/standby"""
+        """Set mode to off/standby."""
+        """The API does not support off mode so we simulate it by setting temp to 5C."""
 
         async with async_timeout.timeout(10):
-            data = {"serialNumber": serial}
+            data = {"serialNumber": serial, "temperature": 500}
             res = await self.request(
                 "PUT",
-                "/Mode/off",
+                "/Mode/manual",
                 data=json.dumps(data),
                 headers={
                     "Content-Type": CONTENT_TYPE,
