@@ -2,10 +2,13 @@
   "name": "SENZ WiFi",
   "domains": [
     "climate",
-    "sensor"
+    "sensor",
+    "binary_sensor"
   ],
   "homeassistant": "2021.11.0",
   "iot_class": [
     "Cloud Poll"
-  ]
+  ],
+  "zip_release": true,
+  "filename": "senz.zip"
 }
