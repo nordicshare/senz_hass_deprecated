@@ -6,6 +6,7 @@ from datetime import timedelta
 
 import async_timeout
 import voluptuous as vol
+from aiohttp.client_exceptions import ClientResponseError
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_CLIENT_ID, CONF_CLIENT_SECRET
 from homeassistant.core import HomeAssistant
@@ -14,6 +15,8 @@ from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.config_entry_oauth2_flow import LocalOAuth2Implementation
 from homeassistant.helpers.typing import ConfigType
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
+
+from custom_components.senz.pysenz import SenzAuthException
 
 from . import config_flow
 from .api import AsyncConfigEntryAuth
@@ -126,7 +129,9 @@ async def get_coordinator(
         async with async_timeout.timeout(10):
             res = await senz_api.request("GET", "/Thermostat")
             # _LOGGER.debug("Data: %s", await res.json())
-            return await res.json()
+        if res.status == 401:
+            raise SenzAuthException("Authentication failure when fetching data")
+        return await res.json()
 
     hass.data[DOMAIN][entry.entry_id]["coordinator"] = DataUpdateCoordinator(
         hass,

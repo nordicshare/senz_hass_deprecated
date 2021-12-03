@@ -90,7 +90,9 @@ class SenzClimate(CoordinatorEntity, ClimateEntity):
         """Return the current mode."""
         """ Since API does not support off mode we simulate it by manual mode and 5C."""
         mode = self.coordinator.data[self._idx]["mode"]
-        if mode == 5 or (mode == 3 and self.coordinator.data[self._idx]["setPointTemperature"] == 500):
+        if mode == 5 or (
+            mode == 3 and self.coordinator.data[self._idx]["setPointTemperature"] == 500
+        ):
             return HVAC_MODE_OFF
         if mode == 3:
             return HVAC_MODE_HEAT

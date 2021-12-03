@@ -131,3 +131,11 @@ class AbstractAuth(ABC):
                 },
             )
         return res
+
+
+class SenzException(Exception):
+    """Generic senz exception."""
+
+
+class SenzAuthException(SenzException):
+    """Authentication failure."""

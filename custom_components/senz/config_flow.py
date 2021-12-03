@@ -1,6 +1,13 @@
 """Config flow for SENZ WiFi."""
-import logging
 
+from __future__ import annotations
+
+import logging
+from typing import Any
+
+import voluptuous as vol
+from homeassistant.components import persistent_notification
+from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers import config_entry_oauth2_flow
 
 from .const import DOMAIN
@@ -24,3 +31,30 @@ class OAuth2FlowHandler(
         return {
             "scope": "restapi openid offline_access",
         }
+
+    async def async_step_reauth(
+        self, entry: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Perform reauth upon an API authentication error."""
+        persistent_notification.async_create(
+            self.hass,
+            f"Senz integration for account {entry['id']} needs to be re-authenticated. Please go to the integrations page to re-configure it.",
+            "Senz re-authentication",
+            "senz_reauth",
+        )
+        return await self.async_step_reauth_confirm()
+
+    async def async_step_reauth_confirm(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Dialog that informs the user that reauth is required."""
+        if user_input is None:
+            return self.async_show_form(
+                step_id="reauth_confirm",
+                description_placeholders={"account": self.entry["id"]},
+                data_schema=vol.Schema({}),
+                errors={},
+            )
+
+        persistent_notification.async_dismiss(self.hass, "senz_reauth")
+        return await self.async_step_user()
