@@ -9,6 +9,9 @@ from abc import ABC, abstractmethod
 
 import async_timeout
 from aiohttp import ClientResponse, ClientSession
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
+
+from .const import SENZ_API
 
 CONTENT_TYPE = "application/json-patch+json"
 
@@ -131,6 +134,27 @@ class AbstractAuth(ABC):
                 },
             )
         return res
+
+
+class PreAPI:
+    """API just for getting Account name before everything is up."""
+
+    def __init__(self, hass):
+        self.hass = hass
+
+    async def getAccount(self, access_token: str) -> str:
+        """Get the account name."""
+        session = async_get_clientsession(self.hass)
+        headers = {
+            "Authorization": f"Bearer {access_token}",
+            "Accept": "application/json",
+        }
+        res = await session.request(
+            "GET",
+            f"{SENZ_API}/Account",
+            headers=headers,
+        )
+        return await res.json()
 
 
 class SenzException(Exception):
