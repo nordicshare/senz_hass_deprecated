@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import logging
 from datetime import timedelta
+from http import HTTPStatus
 
 import async_timeout
 import voluptuous as vol
@@ -14,7 +15,11 @@ from homeassistant.helpers import aiohttp_client, config_entry_oauth2_flow
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.config_entry_oauth2_flow import LocalOAuth2Implementation
 from homeassistant.helpers.typing import ConfigType
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
+from homeassistant.helpers.update_coordinator import (
+    ConfigEntryAuthFailed,
+    ConfigEntryNotReady,
+    DataUpdateCoordinator,
+)
 
 from custom_components.senz.pysenz import SenzAuthException
 
@@ -94,6 +99,18 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     )
 
     session = config_entry_oauth2_flow.OAuth2Session(hass, entry, implementation)
+    try:
+        await session.async_ensure_token_valid()
+    except ClientResponseError as ex:
+        _LOGGER.debug("API error: %s (%s)", ex.code, ex.message)
+        if ex.code in (
+            HTTPStatus.BAD_REQUEST,
+            HTTPStatus.UNAUTHORIZED,
+            HTTPStatus.FORBIDDEN,
+        ):
+            raise ConfigEntryAuthFailed("Token not valid, trigger renewal") from ex
+        raise ConfigEntryNotReady from ex
+
     hass.data[DOMAIN][entry.entry_id] = {}
     hass.data[DOMAIN][entry.entry_id]["api"] = AsyncConfigEntryAuth(
         aiohttp_client.async_get_clientsession(hass), session

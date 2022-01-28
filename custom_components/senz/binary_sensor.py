@@ -5,9 +5,8 @@ from homeassistant.components.binary_sensor import (
     DEVICE_CLASS_CONNECTIVITY,
     BinarySensorEntity,
 )
-from homeassistant.const import ENTITY_CATEGORY_DIAGNOSTIC
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.helpers.entity import DeviceInfo, EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import ConfigType
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
@@ -38,7 +37,7 @@ class SenzBinarySensor(CoordinatorEntity, BinarySensorEntity):
         self._idx = idx
         self._attr_name = self.coordinator.data[self._idx]["name"]
         self._attr_device_class = DEVICE_CLASS_CONNECTIVITY
-        self._attr_entity_category = ENTITY_CATEGORY_DIAGNOSTIC
+        self._attr_entity_category = EntityCategory.DIAGNOSTIC
         self._attr_unique_id = (
             f"online-{self.coordinator.data[self._idx]['serialNumber']}"
         )
