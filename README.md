@@ -24,8 +24,8 @@ Make sure you have the credentials available for your account with nVent cloud.
 
 ### Setup
 
-Request a client_id and client_secret from the manufacturer and
-enter following lines to `configuration.yaml`
+Request a client_id and client_secret from the [manufacturer SENZ/Raychem](https://api.senzthermostat.nvent.com/). Ask for a set of credentials for Home Assistant integration.
+Enter following lines to `configuration.yaml`
 
 ```yaml
 senz:
