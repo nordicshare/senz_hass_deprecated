@@ -12,6 +12,7 @@
   "dependencies": [
     "http"
   ],
+  "after_dependencies": ["cloud"],
   "codeowners": [
     "@astrandb"
   ],
