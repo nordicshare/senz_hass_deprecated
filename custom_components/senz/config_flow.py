@@ -6,12 +6,16 @@ import logging
 from typing import Any
 
 import voluptuous as vol
+from awesomeversion import AwesomeVersion
 from homeassistant.components import persistent_notification
+from homeassistant.components.cloud import account_link
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers import config_entry_oauth2_flow
 
 from .const import DOMAIN
 from .pysenz import PreAPI
+
+account_link.CURRENT_VERSION = AwesomeVersion("2022.3.0")
 
 
 class OAuth2FlowHandler(
@@ -68,7 +72,7 @@ class OAuth2FlowHandler(
 
         pre_api = PreAPI(self.hass)
         resp = await pre_api.getAccount(data["token"]["access_token"])
-        account = resp["userName"];
+        account = resp["userName"]
 
         existing_entry = await self.async_set_unique_id(account)
         if existing_entry:
