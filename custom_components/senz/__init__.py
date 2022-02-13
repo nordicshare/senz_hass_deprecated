@@ -8,6 +8,7 @@ from http import HTTPStatus
 import async_timeout
 import voluptuous as vol
 from aiohttp.client_exceptions import ClientResponseError
+from homeassistant.components.cloud import account_link
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_CLIENT_ID, CONF_CLIENT_SECRET
 from homeassistant.core import HomeAssistant
@@ -24,6 +25,8 @@ from homeassistant.helpers.update_coordinator import (
 from . import config_flow
 from .api import AsyncConfigEntryAuth
 from .const import DOMAIN, OAUTH2_AUTHORIZE, OAUTH2_TOKEN
+
+account_link.HA_VERSION = "2022.3.0"
 
 _LOGGER = logging.getLogger(__name__)
 
