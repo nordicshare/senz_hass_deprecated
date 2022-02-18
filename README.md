@@ -24,6 +24,8 @@ Make sure you have the credentials available for your account with nVent cloud.
 
 ### Setup
 
+> **_Note:_** In Home Assistant 2022.3 or later the client_id/client_secret will be handled by NabuCasa account linking. You will not need your own credentials from the manufacturer and you don't need to enter anything into `configuration.yaml`.
+
 Request a client_id and client_secret from the [manufacturer SENZ/Raychem](https://api.senzthermostat.nvent.com/). Ask for a set of credentials for Home Assistant integration.
 Enter following lines to `configuration.yaml`
 
