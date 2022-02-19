@@ -1,4 +1,4 @@
-__VERSION__ = "0.0.4"
+__VERSION__ = "0.0.5"
 
 bump:
 	bump2version --allow-dirty --current-version $(__VERSION__) patch Makefile custom_components/senz/const.py custom_components/senz/manifest.json
