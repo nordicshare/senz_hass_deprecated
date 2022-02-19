@@ -1,4 +1,4 @@
-[![senz_hass](https://img.shields.io/github/v/release/astrandb/senz_hass)](https://github.com/astrandb/senz_hass/releases/latest) [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/custom-components/hacs) ![Validate with hassfest](https://github.com/astrandb/senz_hass/workflows/Validate%20with%20hassfest/badge.svg) ![Maintenance](https://img.shields.io/maintenance/yes/2022.svg) [![senz_hass_downloads](https://img.shields.io/github/downloads/astrandb/senz_hass/total)](https://github.com/astrandb/senz_hass)
+[![senz_hass](https://img.shields.io/github/v/release/astrandb/senz_hass)](https://github.com/astrandb/senz_hass/releases/latest) [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/custom-components/hacs) ![Validate with hassfest](https://github.com/astrandb/senz_hass/workflows/Validate%20with%20hassfest/badge.svg) ![Maintenance](https://img.shields.io/maintenance/yes/2022.svg) [![senz_hass_downloads](https://img.shields.io/github/downloads/astrandb/senz_hass/total)](https://github.com/astrandb/senz_hass) [![senz_hass_downloads](https://img.shields.io/github/downloads/astrandb/senz_hass/latest/total)](https://github.com/astrandb/senz_hass)
 
 # SENZ Wifi Integration for Home Assistant
 
@@ -23,6 +23,8 @@ Make sure you have the credentials available for your account with nVent cloud.
 - Restart Home Assistant
 
 ### Setup
+
+> **_Note:_** In Home Assistant 2022.3 or later the client_id/client_secret will be handled by NabuCasa account linking. You will not need your own credentials from the manufacturer and you don't need to enter anything into `configuration.yaml`.
 
 Request a client_id and client_secret from the [manufacturer SENZ/Raychem](https://api.senzthermostat.nvent.com/). Ask for a set of credentials for Home Assistant integration.
 Enter following lines to `configuration.yaml`

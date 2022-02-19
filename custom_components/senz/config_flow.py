@@ -68,7 +68,7 @@ class OAuth2FlowHandler(
 
         pre_api = PreAPI(self.hass)
         resp = await pre_api.getAccount(data["token"]["access_token"])
-        account = resp["userName"];
+        account = resp["userName"]
 
         existing_entry = await self.async_set_unique_id(account)
         if existing_entry:
