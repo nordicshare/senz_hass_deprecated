@@ -40,3 +40,6 @@ autolabeler:
   - label: "bugfix"
     title:
       - "/fix/i"
+  - label: "translation"
+    files:
+      - "custom_components/senz/translation/*.json"
