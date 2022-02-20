@@ -10,5 +10,6 @@
     "Cloud Poll"
   ],
   "zip_release": true,
-  "filename": "senz.zip"
+  "filename": "senz.zip",
+  "render_readme": true
 }
