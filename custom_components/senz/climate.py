@@ -100,6 +100,15 @@ class SenzClimate(CoordinatorEntity, ClimateEntity):
             return HVAC_MODE_AUTO
         return
 
+    @property
+    def available(self):
+        """Return the availability of the entity."""
+
+        if not self.coordinator.last_update_success:
+            return False
+
+        return self.coordinator.data[self._idx]["online"]
+
     async def async_set_hvac_mode(self, hvac_mode: str) -> None:
         """Set new hvac mode."""
         if hvac_mode == HVAC_MODE_HEAT:

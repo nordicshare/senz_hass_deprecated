@@ -56,3 +56,13 @@ class SenzSensor(CoordinatorEntity, SensorEntity):
     def native_value(self):
         """Return the state of the sensor."""
         return round(self.coordinator.data[self._idx]["currentTemperature"] / 100, 1)
+
+    @property
+    def available(self):
+        """Return the availability of the entity."""
+
+        if not self.coordinator.last_update_success:
+            return False
+
+        return self.coordinator.data[self._idx]["online"]
+
