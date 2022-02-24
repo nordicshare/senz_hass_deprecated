@@ -143,12 +143,15 @@ async def get_coordinator(
 
     async def async_fetch():
         senz_api = hass.data[DOMAIN][entry.entry_id]["api"]
-        async with async_timeout.timeout(10):
-            res = await senz_api.request("GET", "/Thermostat")
-            # _LOGGER.debug("Data: %s", await res.json())
-        if res.status == 401:
-            raise SenzAuthException("Authentication failure when fetching data")
-        return await res.json()
+        try:
+            async with async_timeout.timeout(10):
+                res = await senz_api.request("GET", "/Thermostat")
+                # _LOGGER.debug("Data: %s", await res.json())
+            return await res.json()
+        except ClientResponseError as exc:
+            if exc.status == 401:
+                raise ConfigEntryAuthFailed from exc
+            _LOGGER.warning("API fetch failed. Status: %s, - %s" , exc.code , exc.message)
 
     hass.data[DOMAIN][entry.entry_id]["coordinator"] = DataUpdateCoordinator(
         hass,
