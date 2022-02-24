@@ -21,8 +21,6 @@ from homeassistant.helpers.update_coordinator import (
     DataUpdateCoordinator,
 )
 
-from custom_components.senz.pysenz import SenzAuthException
-
 from . import config_flow
 from .api import AsyncConfigEntryAuth
 from .const import DOMAIN, OAUTH2_AUTHORIZE, OAUTH2_TOKEN
@@ -151,7 +149,7 @@ async def get_coordinator(
         except ClientResponseError as exc:
             if exc.status == 401:
                 raise ConfigEntryAuthFailed from exc
-            _LOGGER.warning("API fetch failed. Status: %s, - %s" , exc.code , exc.message)
+            _LOGGER.warning("API fetch failed. Status: %s, - %s", exc.code, exc.message)
 
     hass.data[DOMAIN][entry.entry_id]["coordinator"] = DataUpdateCoordinator(
         hass,

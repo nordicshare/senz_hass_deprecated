@@ -65,4 +65,3 @@ class SenzSensor(CoordinatorEntity, SensorEntity):
             return False
 
         return self.coordinator.data[self._idx]["online"]
-
