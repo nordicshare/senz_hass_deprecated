@@ -43,12 +43,14 @@ class AbstractAuth(ABC):
         access_token = await self.async_get_access_token()
         headers["authorization"] = f"Bearer {access_token}"
 
-        return await self.websession.request(
+        res = await self.websession.request(
             method,
             f"{self.host}{url}",
             **kwargs,
             headers=headers,
         )
+        res.raise_for_status()
+        return res
 
     async def set_target_temperature(self, serial: str, temperature: int):
         """Set target temperature"""
@@ -64,6 +66,7 @@ class AbstractAuth(ABC):
                     "Accept": "application/json",
                 },
             )
+        res.raise_for_status()
         return res
 
     async def set_mode_auto(self, serial: str):
@@ -80,6 +83,7 @@ class AbstractAuth(ABC):
                     "Accept": "application/json",
                 },
             )
+        res.raise_for_status()
         return res
 
     async def set_mode_manual(self, serial: str):
@@ -96,6 +100,7 @@ class AbstractAuth(ABC):
                     "Accept": "application/json",
                 },
             )
+        res.raise_for_status()
         return res
 
     async def set_mode_hold(self, serial: str, temperature: int, hold_until: str):
@@ -116,6 +121,7 @@ class AbstractAuth(ABC):
                     "Accept": "application/json",
                 },
             )
+        res.raise_for_status()
         return res
 
     async def set_mode_off(self, serial: str):
@@ -133,6 +139,7 @@ class AbstractAuth(ABC):
                     "Accept": "application/json",
                 },
             )
+        res.raise_for_status()
         return res
 
 
@@ -154,6 +161,7 @@ class PreAPI:
             f"{SENZ_API}/Account",
             headers=headers,
         )
+        res.raise_for_status()
         return await res.json()
 
 
