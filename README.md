@@ -2,10 +2,6 @@
 
 # SENZ Wifi Integration for Home Assistant
 
-_Work in progress_
-
-Known limitations: There is only limited error and exception handling in this pre-release.
-
 This integration will represent your SENZ WiFi thermostats as climate entities in Home Assistant. There is also a temperature sensor to simplify use in the UI.
 
 ## Installation
